@@ -23,14 +23,19 @@ jobs:
 
       - name: Make
         run: |
+          echo "::group::Make init"
           make init
+          echo "::endgroup::"
+
           cd webapp/sql
           bunzip2 dump.sql.bz2
           cd ../..
 
       - name: Up Web
         run: |
+          cd webapp
           docker compose up -d
+          cd ..
 
       - name: Setup Go
         uses: actions/setup-go@v2
