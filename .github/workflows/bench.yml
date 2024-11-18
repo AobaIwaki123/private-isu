@@ -21,20 +21,52 @@ jobs:
           docker compose version
           echo "::endgroup::"
 
-      - name: Make
+      - name: Restore SQL dump
+        uses: actions/cache@v4
+        with:
+          key: webapp-sql-dump
+          path: webapp/sql/dump.sql
+      
+      - name: Fetch SQL dump
         run: |
-          echo "::group::Make init"
-          make init
+          if [ -f webapp/sql/dump.sql ]; then
+            echo "SQL dump already exists"
+            exit 0
+          fi
+
+          echo "::group::Make Fetch SQL dump"
+          make webapp/sql/dump.sql.bz2
           echo "::endgroup::"
 
           cd webapp/sql
           bunzip2 dump.sql.bz2
           cd ../..
 
+      - name: Restore Images
+        uses: actions/cache@v4
+        with:
+          key: benchmarker-userdata-img
+          path: benchmarker/userdata/img
+
+      - name: Fetch Images
+        run: |
+          if [ -d benchmarker/userdata/img ]; then
+            echo "Images already exists"
+            exit 0
+          fi
+          
+          echo "::group::Make Fetch Images"
+          make benchmarker/userdata/img
+          echo "::endgroup::"
+
       - name: Up Web
         run: |
           cd webapp
+          
+          echo "::group::Docker compose up"
           docker compose up -d
+          echo "::endgroup::"
+
           cd ..
 
       - name: Setup Go
@@ -45,7 +77,15 @@ jobs:
       - name: Install bench
         run: |
           cd benchmarker
+
+          echo "::group::Make All"
           make all
+          echo "::endgroup::"
+
+          echo "::group::Install Check"
+          ls
+          ls bin
+          echo "::endgroup::"
 
       - name: Run bench
         run: bin/benchmarker -t http://localhost -u ./userdata 
