@@ -3,11 +3,11 @@ services:
   nginx:
     image: nginx:1.26
     volumes:
-      - ./etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./etc/nginx/:/etc/nginx/
       - ./public:/public
       - ./logs/nginx:/var/log/nginx
     ports:
-      - "8080:80"
+      - "80:80"
     networks:
       - my_network
 
