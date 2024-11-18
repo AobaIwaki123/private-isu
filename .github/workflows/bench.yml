@@ -42,6 +42,12 @@ jobs:
           bunzip2 dump.sql.bz2
           cd ../..
 
+      - name: Cache SQL Dump
+        uses: actions/cache@v4
+        with:
+          key: webapp-sql-dump
+          path: webapp/sql/dump.sql
+
       - name: Restore Images
         uses: actions/cache@v4
         with:
@@ -54,10 +60,16 @@ jobs:
             echo "Images already exists"
             exit 0
           fi
-          
+
           echo "::group::Make Fetch Images"
           make benchmarker/userdata/img
           echo "::endgroup::"
+
+      - name: Cache Images
+        uses: actions/cache@v4
+        with:
+          key: benchmarker-userdata-img
+          path: benchmarker/userdata/img
 
       - name: Up Web
         run: |
@@ -80,6 +92,7 @@ jobs:
 
           echo "::group::Make All"
           make all
+          chmod +x bin/benchmarker
           echo "::endgroup::"
 
           echo "::group::Install Check"
