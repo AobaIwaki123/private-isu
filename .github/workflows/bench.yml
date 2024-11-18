@@ -22,18 +22,15 @@ jobs:
           echo "::endgroup::"
 
       - name: Restore SQL dump
+        id: restore-sql-dump
         uses: actions/cache@v4
         with:
           key: webapp-sql-dump
           path: webapp/sql/dump.sql
       
       - name: Fetch SQL dump
+        if: steps.restore-sql-dump.outputs.cache-hit != 'true'
         run: |
-          if [ -f webapp/sql/dump.sql ]; then
-            echo "SQL dump already exists"
-            exit 0
-          fi
-
           echo "::group::Make Fetch SQL dump"
           make webapp/sql/dump.sql.bz2
           echo "::endgroup::"
@@ -44,17 +41,20 @@ jobs:
 
       - name: Cache SQL Dump
         uses: actions/cache/save@v4
+        if: steps.restore-sql-dump.outputs.cache-hit != 'true'
         with:
           key: webapp-sql-dump
           path: webapp/sql/dump.sql
 
       - name: Restore Images
+        id: restore-images
         uses: actions/cache@v4
         with:
           key: benchmarker-userdata-img
           path: benchmarker/userdata/img
 
       - name: Fetch Images
+        if: steps.restore-images.outputs.cache-hit != 'true'
         run: |
           if [ -d benchmarker/userdata/img ]; then
             echo "Images already exists"
@@ -66,6 +66,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Cache Images
+        if: steps.restore-images.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           key: benchmarker-userdata-img
