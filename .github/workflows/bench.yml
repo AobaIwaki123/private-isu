@@ -85,7 +85,7 @@ jobs:
       - name: Check Web
         run: |
           echo "::group::Check Web"
-          curl -I http://localhost:8080
+          curl -I http://127.0.0.1:8080
           echo "::endgroup::"
 
       - name: Setup Go
@@ -107,11 +107,11 @@ jobs:
           ls bin
           echo "::endgroup::"
 
-          bin/benchmarker -t http://localhost:8080 -u ./userdata 
+          bin/benchmarker -t http://127.0.0.1:8080 -u ./userdata 
 
       - name: Run bench
         run: |
           pwd
-          bin/benchmarker -t http://localhost -u ./userdata 
+          bin/benchmarker -t http://127.0.0.1 -u ./userdata 
     
 
