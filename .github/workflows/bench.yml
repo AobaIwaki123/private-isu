@@ -18,7 +18,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::Docker compose version"
-          docker compose --version
+          docker compose version
           echo "::endgroup::"
 
       - name: Make
