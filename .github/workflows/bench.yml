@@ -43,7 +43,7 @@ jobs:
           cd ../..
 
       - name: Cache SQL Dump
-        uses: actions/cache@v4
+        uses: actions/cache/save@v4
         with:
           key: webapp-sql-dump
           path: webapp/sql/dump.sql
@@ -66,7 +66,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Cache Images
-        uses: actions/cache@v4
+        uses: actions/cache/save@v4
         with:
           key: benchmarker-userdata-img
           path: benchmarker/userdata/img
