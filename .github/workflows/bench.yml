@@ -1,0 +1,37 @@
+name: Private ISU bench
+run-name: Private ISU bench
+on: push
+defaults:
+  run:
+    shell: bash
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make
+        run: |
+          make init
+          cd webapp/sql
+          bunzip2 dump.sql.bz2
+          cd ../..
+
+      - name: Up Web
+        run: |
+          docker-compose up -d
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.23
+
+      - name: Install bench
+        run: |
+          cd benchmarker
+          make all
+
+      - name: Run bench
+        run: bin/benchmarker -t http://localhost -u ./userdata 
+    
+
