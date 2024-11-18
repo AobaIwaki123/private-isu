@@ -81,6 +81,12 @@ jobs:
 
           cd ..
 
+      - name: Check Web
+        run: |
+          echo "::group::Check Web"
+          curl -I http://localhost
+          echo "::endgroup::"
+
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
