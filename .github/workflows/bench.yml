@@ -13,8 +13,13 @@ jobs:
 
       - name: Check Docker
         run: |
+          echo "::group::Docker version"
           docker --version
+          echo "::endgroup::"
+
+          echo "::group::Docker compose version"
           docker compose --version
+          echo "::endgroup::"
 
       - name: Make
         run: |
